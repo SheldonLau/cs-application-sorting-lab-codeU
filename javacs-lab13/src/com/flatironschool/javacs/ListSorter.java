@@ -3,6 +3,7 @@
  */
 package com.flatironschool.javacs;
 
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -63,9 +64,53 @@ public class ListSorter<T> {
 	 * @return
 	 */
 	public List<T> mergeSort(List<T> list, Comparator<T> comparator) {
-        // FILL THIS IN!
-        return null;
+    
+    if(list.size() <= 1) {
+      return list;
+    }
+    List<T> left = new ArrayList<T>();
+    List<T> right = new ArrayList<T>();
+
+    for(int i = 0; i < list.size(); i++) {
+      if(i % 2 == 0) {
+        left.add(list.get(i));
+      }
+      else {
+        right.add(list.get(i));
+      }
+    }
+    left = mergeSort(left, comparator);
+    right = mergeSort(right, comparator);
+    
+    List<T> sorted = merge(left, right, comparator);
+    return sorted;
 	}
+
+  public List<T> merge(List<T> left, List<T> right, Comparator<T> comparator) {
+    List<T> sorted = new ArrayList<T>();
+    while(left.size() != 0 && right.size() != 0) {
+      if(comparator.compare(left.get(0), right.get(0)) < 0) {
+        sorted.add(left.get(0));
+        left.remove(0);
+      }
+      else {
+        sorted.add(right.get(0));
+        right.remove(0);
+      }
+    }
+
+    while(left.size() != 0) {
+      sorted.add(left.get(0));
+      left.remove(0);
+    }
+
+    while(right.size() != 0) {
+      sorted.add(right.get(0));
+      right.remove(0);
+    }
+
+    return sorted;
+  } 
 
 	/**
 	 * Sorts a list using a Comparator object.
@@ -75,7 +120,15 @@ public class ListSorter<T> {
 	 * @return
 	 */
 	public void heapSort(List<T> list, Comparator<T> comparator) {
-        // FILL THIS IN!
+    PriorityQueue<T> prq = new PriorityQueue<T>();
+    for(int i = 0; i < list.size(); i++) {
+      prq.offer(list.get(i));
+    }
+    list.clear();
+    while(!prq.isEmpty()) {
+        list.add(prq.poll());
+    }
+    
 	}
 
 	
@@ -89,9 +142,26 @@ public class ListSorter<T> {
 	 * @return
 	 */
 	public List<T> topK(int k, List<T> list, Comparator<T> comparator) {
-        // FILL THIS IN!
-        return null;
-	}
+	  PriorityQueue<T> prq = new PriorityQueue<T>();
+    List<T> sorted = new ArrayList<T>();
+    for(T element : list) {
+      if(prq.size() < k) {
+        prq.offer(element);
+      }
+      else {
+        T tempSmallest = prq.peek();
+        int smaller = comparator.compare(element, tempSmallest);
+        if(smaller > 0) {
+          prq.remove(tempSmallest);
+          prq.offer(element);
+        }
+      }
+    }
+    while(!prq.isEmpty()) {
+        sorted.add(prq.poll());
+    }
+    return sorted;
+  }
 
 	
 	/**
